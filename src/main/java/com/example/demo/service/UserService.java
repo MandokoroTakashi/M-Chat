@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
@@ -12,6 +13,7 @@ import com.example.demo.repository.UserRepository;
 public class UserService {
 
     private final UserRepository userRepository;
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -34,6 +36,11 @@ public class UserService {
 
     // 新規ユーザーを作成
     public User createUser(User user) {
-        return userRepository.save(user);
+    	User userData = new User();
+    	
+    	userData.setUsername(user.getUsername());
+    	userData.setEmail(user.getEmail());
+    	userData.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepository.save(userData);
     }
 }
